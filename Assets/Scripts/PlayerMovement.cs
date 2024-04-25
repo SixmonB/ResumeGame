@@ -12,17 +12,24 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float groundDistance = 0.4f;
     [SerializeField] private LayerMask groundMask;
 
+    private float displacementTolerance = 0.005f;
+
     private Vector3 velocity;
 
-    bool isGrounded;
+    public bool isGrounded;
 
-    private Vector3 moveDirection;
+    public bool isMoving;
+
+    private Vector3 lastPosition = new Vector3(0f,0f,0f);
 
     private CharacterController controller;
+
+    private Animator animator;
 
     private void Start()
     {
         controller = GetComponent<CharacterController>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     private void Update()
@@ -54,6 +61,35 @@ public class PlayerMovement : MonoBehaviour
         // falling down
         velocity.y += gravity * Time.deltaTime;
 
-        controller.Move(velocity * Time.deltaTime); 
+        controller.Move(velocity * Time.deltaTime);
+
+
+        Vector3 displacement = gameObject.transform.position - lastPosition;
+        float displacementValue = displacement.magnitude;
+
+        Debug.Log("Desplazamiento : " + displacementValue);
+
+        if (displacementValue >= displacementTolerance && isGrounded == true)
+        {
+            isMoving = true;
+            Move();
+        }
+        else
+        {
+            isMoving = false;
+            Idle();
+        }
+
+        lastPosition = gameObject.transform.position;
+    }
+
+    private void Idle()
+    {
+        animator.SetFloat("Speed", 0, 0.1f, Time.deltaTime);
+    }
+
+    private void Move()
+    {
+        animator.SetFloat("Speed", 1, 0.1f, Time.deltaTime);
     }
 }
