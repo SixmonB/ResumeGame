@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private float moveSpeed;
+    [SerializeField] private float walkSpeed;
+    [SerializeField] private float runSpeed = 5f;
     [SerializeField] private float gravity = -9.81f * 2;
     [SerializeField] private float jumpHeight = 3f;
 
@@ -28,6 +30,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
+        walkSpeed = runSpeed * 0.5f;
         controller = GetComponent<CharacterController>();
         animator = GetComponentInChildren<Animator>();
     }
@@ -69,10 +72,10 @@ public class PlayerMovement : MonoBehaviour
 
         Debug.Log("Desplazamiento : " + displacementValue);
 
-        if (displacementValue >= displacementTolerance && isGrounded == true)
+        if (Mathf.Abs(displacementValue) >= displacementTolerance && isGrounded == true)
         {
             isMoving = true;
-            Move();
+            Run();
         }
         else
         {
@@ -88,8 +91,15 @@ public class PlayerMovement : MonoBehaviour
         animator.SetFloat("Speed", 0, 0.1f, Time.deltaTime);
     }
 
-    private void Move()
+    private void Walk()
     {
+        moveSpeed = walkSpeed;
+        animator.SetFloat("Speed", 0, 0.1f, Time.deltaTime);
+    }
+
+    private void Run()
+    {
+        moveSpeed = runSpeed;
         animator.SetFloat("Speed", 1, 0.1f, Time.deltaTime);
     }
 }
