@@ -110,7 +110,7 @@ public class ThirdPersonMovement : MonoBehaviour
     private void Walk()
     {
         moveSpeed = walkSpeed;
-        animator.SetFloat("Speed", 0, 0.1f, Time.deltaTime);
+        animator.SetFloat("Speed", 0.5f, 0.1f, Time.deltaTime);
     }
 
     private void Run()
